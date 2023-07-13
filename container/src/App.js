@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 const MarketingApp = lazy(() => import('./components/MarketingApp'));
 const AuthApp = lazy(() => import('./components/AuthApp'));
+const DashboardApp = lazy(() => import('./components/DashboardApp'));
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'co_',
@@ -22,6 +23,7 @@ export default () => {
           <Route path="/auth" component={AuthApp}>
             <AuthApp onSignIn={() => setSignedIn(true)}></AuthApp>
           </Route>
+          <Route path="/dashboard" component={DashboardApp} />
           <Route path="/" component={MarketingApp} />
         </Switch>
       </Suspense>
