@@ -1,9 +1,10 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import Header from './components/Header';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 import Progress from './components/Progress';
 import { useState } from 'react';
+import { createBrowserHistory } from 'history';
 
 const MarketingApp = lazy(() => import('./components/MarketingApp'));
 const AuthApp = lazy(() => import('./components/AuthApp'));
@@ -13,20 +14,31 @@ const generateClassName = createGenerateClassName({
   productionPrefix: 'co_',
 });
 
+const history = createBrowserHistory();
+
 export default () => {
   const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    if (signedIn) {
+      history.pushState('/dashboard');
+    }
+  }, [signedIn]);
+
   return <StylesProvider generateClassName={generateClassName}>
-    <BrowserRouter>
+    <Router history={history}>
       <Header signedIn={signedIn} onSignOut={() => setSignedIn(false)} />
       <Suspense fallback={<Progress />}>
         <Switch>
           <Route path="/auth" component={AuthApp}>
             <AuthApp onSignIn={() => setSignedIn(true)}></AuthApp>
           </Route>
-          <Route path="/dashboard" component={DashboardApp} />
+          <Route path="/dashboard">
+            {signedIn ? <DashboardApp></DashboardApp> : <Redirect to="/" /> }
+          </Route>
           <Route path="/" component={MarketingApp} />
         </Switch>
       </Suspense>
-    </BrowserRouter>
+    </Router>
   </StylesProvider>;
 }
