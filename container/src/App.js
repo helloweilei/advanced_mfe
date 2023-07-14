@@ -21,7 +21,7 @@ export default () => {
 
   useEffect(() => {
     if (signedIn) {
-      history.pushState('/dashboard');
+      history.push('/dashboard');
     }
   }, [signedIn]);
 
